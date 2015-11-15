@@ -1,2 +1,10 @@
 *.pyc
 notes
+mysite.sock
+logs
+venv
+mysite/db.sqlite3
+mysite/notes
+mysite/static
+# this has secret key:
+mysite/mysite/settings*
