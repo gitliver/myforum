@@ -1,2 +1,3 @@
-# myforum
-a silly Django forum application
+## myforum
+
+a silly Django forum application, done as an interview question
