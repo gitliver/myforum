@@ -1,5 +1,5 @@
 *.pyc
-notes
+notes*
 mysite.sock
 logs
 venv

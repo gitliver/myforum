@@ -1,3 +1,3 @@
 ## myforum
 
-a silly Django forum application, done as an interview question
+a silly Django forum application, done as an assignment

@@ -1,3 +1,43 @@
-<h3>Test</h3>
+{% extends "base.html" %}
 
-<i>Hello World</i>
+{% block content %}
+
+<h2>The Pontificator</h2>
+<i>A forum for forum's sake</i>
+
+<br>
+<br>
+
+Start a new thread!
+
+<br>
+<br>
+
+<form action="/" method="post">
+    {% csrf_token %}
+    {{ myform }}
+    <input type="submit" value="Submit" />
+</form>
+
+<br>
+<hr>
+<br>
+
+Threads:
+<br>
+
+{% if mythreads %}
+    <ul>
+    {% for thread in mythreads %}
+        <li>
+	<u>{{ thread.title }}</u> <small><i>( {{ thread.description }} )</i></small>
+	    <br>
+	    <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date }}</small>
+	</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No threads are available.</p>
+{% endif %}
+
+{% endblock %}
