@@ -13,11 +13,17 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.contrib import admin
 
-urlpatterns = [
-    url(r'^$', include('forum.urls')),
-    # url(r'^forum/', include('forum.urls')),
-    # url(r'^admin/', include(admin.site.urls)),
-]
+# urlpatterns = [
+#     url(r'^$', include('forum.urls')),
+#     # url(r'^.*$', include('forum.urls')),
+#     # url(r'^forum/', include('forum.urls')),
+#     # url(r'^admin/', include(admin.site.urls)),
+# ]
+
+# hand everything off to the forum's URL parser
+urlpatterns = patterns('',
+    url(r'^', include('forum.urls')),
+)

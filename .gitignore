@@ -5,6 +5,8 @@ logs
 venv
 mysite/db.sqlite3
 mysite/notes
-mysite/static
+# mysite/static
+mysite/static/js/packages
+mysite/static/admin
 # this has secret key:
 mysite/mysite/settings*

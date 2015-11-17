@@ -13,7 +13,7 @@ class CommentForm(forms.Form):
 class ThreadModelForm(forms.ModelForm):
     class Meta:
         model = Thread 
-        fields = ['title', 'description']
+        fields = ['title', 'username', 'description']
 
 class CommentModelForm(forms.ModelForm):
     class Meta:

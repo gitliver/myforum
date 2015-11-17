@@ -13,10 +13,13 @@ Start a new thread!
 <br>
 <br>
 
-<form action="/" method="post">
+<form action="/create_post/" method="POST" id="threadForm">
     {% csrf_token %}
     {{ myform }}
+    <!--
     <input type="submit" value="Submit" />
+    -->
+    <input id="threadButton" type="button" value="Submit" />
 </form>
 
 <br>
@@ -40,4 +43,13 @@ Threads:
     <p>No threads are available.</p>
 {% endif %}
 
+{% endblock %}
+
+{% block jsblock %}
+<script src="/static/js/myfunctions.js"></script>
+<script>
+    $(document).ready(function() {
+        ajaxMyForm();
+    });
+</script>
 {% endblock %}
