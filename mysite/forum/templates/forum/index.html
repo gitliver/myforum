@@ -33,7 +33,10 @@ Threads:
     <ul>
     {% for thread in mythreads %}
         <li>
-	<u>{{ thread.title }}</u> <small><i>( {{ thread.description }} )</i></small>
+	    <u>{{ thread.title }}</u>
+            {% if thread.description %}
+	        <small><i>( {{ thread.description }} )</i></small>
+            {% endif %}
 	    <br>
 	    <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date }}</small>
 	</li>

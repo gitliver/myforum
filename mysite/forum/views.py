@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .models import Thread, Comment
 from .forms import ThreadModelForm, CommentModelForm
+from rest_framework import viewsets
+from .serializers import ThreadSerializer, CommentSerializer
 import datetime, pytz
 # import json
 
@@ -14,6 +16,7 @@ import datetime, pytz
 # The Thread Detail View should show the Thread's child Comments and a form to (anonymously) submit a new Comment
 
 def justTesting(request):
+    """A test function, to ensure urls.py is routing properly"""
     return HttpResponse("Hello, world")
 
 def index(request):
@@ -75,3 +78,17 @@ def create_post(request):
     
         # return HttpResponse( json.dumps({"nothing": "fail"}), content_type="application/json")
         return JsonResponse({"nothing": "to see here!"})
+
+# via http://www.django-rest-framework.org/tutorial/quickstart/
+
+class ThreadViewSet(viewsets.ModelViewSet):
+    """API endpoint that allows users to be viewed or edited."""
+
+    queryset = Thread.objects.all().order_by('-pub_date')
+    serializer_class = ThreadSerializer
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """API endpoint that allows groups to be viewed or edited."""
+
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
