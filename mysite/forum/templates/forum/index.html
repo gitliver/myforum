@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- overarching span tag, invoking Angular -->
+<span ng-app="myApp">
 
 <h2>The Pontificator</h2>
 <i>A forum for forum's sake</i>
@@ -26,6 +28,33 @@ Start a new thread!
 <hr>
 <br>
 
+{% verbatim %}
+
+<!-- use Angular -->
+
+Threads:
+<br>
+
+<div ng-controller="myController">
+    <ul>
+      <li ng-repeat="thread in myThreads">
+	 <u>{{ thread.title }}</u>
+	 <small><i>( {{ thread.description }} )</i></small>
+	 <br>
+	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date }}</small>
+      </li>
+    </ul>
+{{ test }}
+</div>
+
+{% endverbatim %}
+
+<br>
+<hr>
+<br>
+
+<!-- use Django template -->
+
 Threads:
 <br>
 
@@ -46,10 +75,13 @@ Threads:
     <p>No threads are available.</p>
 {% endif %}
 
+</span>
 {% endblock %}
 
 {% block jsblock %}
+<!-- concat with grunt later -->
 <script src="/static/js/myfunctions.js"></script>
+<script src="/static/js/myAppController.js"></script>
 <script>
     $(document).ready(function() {
         ajaxMyForm();
