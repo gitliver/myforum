@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- overarching span tag, invoking Angular -->
+<!-- overarching span tags, invoking Angular -->
 <span ng-app="myApp">
+<span ng-controller="threadController">
 
 <h2>The Pontificator</h2>
 <i>A forum for forum's sake</i>
@@ -10,18 +11,14 @@
 <br>
 <br>
 
-
-{% verbatim %}
-
-<!-- use Angular -->
-
 Start a new thread!
 
 <br>
 <br>
 
-<div ng-controller="threadFormController">
+<div>
   <form novalidate>
+    {% csrf_token %}
     Title:
     <input type="text" ng-model="user.mytitle">
     Name:
@@ -29,21 +26,24 @@ Start a new thread!
     Description:
     <input type="text" ng-model="user.mydescription">
     <input type="submit" ng-click="submit()" value="Submit" />
-    <!--
-    <button ng-click="submit()">SUBMIT</button>
-    -->
   </form>
-  <pre>user = {{user | json}}</pre>
 </div>
 
 <br>
 <hr>
 <br>
 
+<!-- 
+"Django and AngularJS share the same token for variable substitution in templates...
+The cleanest solution to circumvent this, is by using the verbatim tag"
+http://django-angular.readthedocs.org/en/latest/integration.html
+ -->
+{% verbatim %}
+
 Threads:
 <br>
 
-<div ng-controller="threadController">
+<div>
     <ul>
       <li ng-repeat="thread in myThreads">
 	 <u>{{ thread.title }}</u>
@@ -52,55 +52,11 @@ Threads:
 	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</small>
       </li>
     </ul>
-{{ test }}
 </div>
 
 {% endverbatim %}
 
-<br>
-<hr>
-<br>
-
-<!-- use Django template -->
-
-Start a new thread!
-
-<br>
-<br>
-
-<form action="/create_post/" method="POST" id="threadForm">
-    {% csrf_token %}
-    {{ myform }}
-    <!--
-    <input type="submit" value="Submit" />
-    -->
-    <input id="threadButton" type="button" value="Submit" />
-</form>
-
-<br>
-<hr>
-<br>
-
-Threads:
-<br>
-
-{% if mythreads %}
-    <ul>
-    {% for thread in mythreads %}
-        <li>
-	    <u>{{ thread.title }}</u>
-            {% if thread.description %}
-	        <small><i>( {{ thread.description }} )</i></small>
-            {% endif %}
-	    <br>
-	    <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date }}</small>
-	</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No threads are available.</p>
-{% endif %}
-
+</span>
 </span>
 {% endblock %}
 
@@ -108,9 +64,4 @@ Threads:
 <!-- concat with grunt later -->
 <script src="/static/js/myfunctions.js"></script>
 <script src="/static/js/myAppController.js"></script>
-<script>
-    $(document).ready(function() {
-        ajaxMyForm();
-    });
-</script>
 {% endblock %}
