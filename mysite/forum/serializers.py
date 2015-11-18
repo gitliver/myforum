@@ -6,9 +6,9 @@ from rest_framework import serializers
 class ThreadSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Thread
-        fields = ('pub_date', 'title', 'username', 'description')
+        fields = ('id', 'pub_date', 'title', 'username', 'description')
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Comment 
-        fields = ('pub_date', 'username', 'text', 'score')
+        fields = ('id', 'pub_date', 'username', 'text', 'score')

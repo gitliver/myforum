@@ -10,6 +10,59 @@
 <br>
 <br>
 
+
+{% verbatim %}
+
+<!-- use Angular -->
+
+Start a new thread!
+
+<br>
+<br>
+
+<div ng-controller="threadFormController">
+  <form novalidate>
+    Title:
+    <input type="text" ng-model="user.mytitle">
+    Name:
+    <input type="text" ng-model="user.myusername">
+    Description:
+    <input type="text" ng-model="user.mydescription">
+    <input type="submit" ng-click="submit()" value="Submit" />
+    <!--
+    <button ng-click="submit()">SUBMIT</button>
+    -->
+  </form>
+  <pre>user = {{user | json}}</pre>
+</div>
+
+<br>
+<hr>
+<br>
+
+Threads:
+<br>
+
+<div ng-controller="threadController">
+    <ul>
+      <li ng-repeat="thread in myThreads">
+	 <u>{{ thread.title }}</u>
+	 <small><i>( {{ thread.description }} )</i></small>
+	 <br>
+	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</small>
+      </li>
+    </ul>
+{{ test }}
+</div>
+
+{% endverbatim %}
+
+<br>
+<hr>
+<br>
+
+<!-- use Django template -->
+
 Start a new thread!
 
 <br>
@@ -27,33 +80,6 @@ Start a new thread!
 <br>
 <hr>
 <br>
-
-{% verbatim %}
-
-<!-- use Angular -->
-
-Threads:
-<br>
-
-<div ng-controller="myController">
-    <ul>
-      <li ng-repeat="thread in myThreads">
-	 <u>{{ thread.title }}</u>
-	 <small><i>( {{ thread.description }} )</i></small>
-	 <br>
-	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date }}</small>
-      </li>
-    </ul>
-{{ test }}
-</div>
-
-{% endverbatim %}
-
-<br>
-<hr>
-<br>
-
-<!-- use Django template -->
 
 Threads:
 <br>

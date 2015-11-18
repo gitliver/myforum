@@ -19,6 +19,12 @@
     <link rel="stylesheet" href="/static/css/custom.css">
     -->
 
+
+    <!-- JavaScript -->
+    <!-- concat with grunt later -->
+    <script src="/static/js/packages/angular.min.js"></script>
+    <script src="/static/js/packages/jquery-1.11.3.min.js"></script>
+
   </head>
 
   <!-- Body -->
@@ -29,12 +35,6 @@
         {% block content %}
         {% endblock %}
       </div>
-
-      <!-- JavaScript -->
-
-      <!-- concat with grunt later -->
-      <script src="/static/js/packages/angular.min.js"></script>
-      <script src="/static/js/packages/jquery-1.11.3.min.js"></script>
 
       <!-- page-specific JavaScript -->
       {% block jsblock %}

@@ -10,4 +10,4 @@ mysite/static/js/packages
 mysite/static/node_modules
 mysite/static/admin
 # this has secret key:
-mysite/mysite/settings*
+mysite/mysite/settings.py

@@ -1,11 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from .models import Thread, Comment
 from .forms import ThreadModelForm, CommentModelForm
 from rest_framework import viewsets
 from .serializers import ThreadSerializer, CommentSerializer
-import datetime, pytz
-# import json
+import json, datetime, pytz
 
 # This code is written for an assignment, whose directions state:
 
@@ -49,38 +48,50 @@ def index(request):
     return render(request, 'forum/index.html', {'myform': form, 'mythreads': forumthreads})
 
 def create_post(request):
-    """Function to create thread (or post), called by javascript AJAX"""
+    """Function to create thread (or post), called by javascript AJAX ... I mean, called by Angular"""
+
+    # see: http://django-angular.readthedocs.org/en/latest/angular-model-form.html
+    if not request.is_ajax():
+        return HttpResponseBadRequest('Expected an XMLHttpRequest')
+
+    in_data = json.loads(request.body)
+
+    # save in database
+    # note that in_data.mytitle throws an error while in_data.get('mytitle') works smoothly
+    post = Thread(pub_date = datetime.datetime.now(pytz.timezone('US/Eastern')), username = in_data.get('myusername'), title = in_data.get('mytitle'), description = in_data.get('mydescription'))
+    post.save()
+
+    return JsonResponse(in_data)
 
     # modified from: https://realpython.com/blog/python/django-and-ajax-form-submissions/
+#    if request.method == 'POST':
+#
+#        # get data
+#        mytitle = request.POST.get('mytitle')
+#        myusername = request.POST.get('myusername')
+#        mydescription = request.POST.get('mydescription')
+#
+#        # save in database
+#        # post = Thread(pub_date = datetime.datetime.now(pytz.timezone('US/Eastern')), username = myusername, title = mytitle, description = mydescription)
+#        # post.save()
+#
+#        # create response data dict
+#        response_data = {
+#			    'title': mytitle,
+#			    'description': mydescription,
+#			    'username': myusername,
+#			}
+#
+#        # return HttpResponse( json.dumps(response_data), content_type="application/json")
+#        return JsonResponse(response_data)
+#
+#    else:
+#    
+#        # return HttpResponse( json.dumps({"nothing": "fail"}), content_type="application/json")
+#        return JsonResponse({"nothing": "to see here!"})
 
-    if request.method == 'POST':
-
-        # get data
-        mytitle = request.POST.get('mytitle')
-        myusername = request.POST.get('myusername')
-        mydescription = request.POST.get('mydescription')
-
-        # save in database
-        post = Thread(pub_date = datetime.datetime.now(pytz.timezone('US/Eastern')), username = myusername, title = mytitle, description = mydescription)
-        post.save()
-
-        # create response data dict
-        response_data = {
-			    'title': mytitle,
-			    'description': mydescription,
-			    'username': myusername,
-			}
-
-        # return HttpResponse( json.dumps(response_data), content_type="application/json")
-        return JsonResponse(response_data)
-
-    else:
-    
-        # return HttpResponse( json.dumps({"nothing": "fail"}), content_type="application/json")
-        return JsonResponse({"nothing": "to see here!"})
-
-# via http://www.django-rest-framework.org/tutorial/quickstart/
-
+# Serializer classes for REST api
+# modified from http://www.django-rest-framework.org/tutorial/quickstart/
 class ThreadViewSet(viewsets.ModelViewSet):
     """API endpoint that allows users to be viewed or edited."""
 
