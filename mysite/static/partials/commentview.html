@@ -1,3 +1,10 @@
+<!-- The Thread -->
+<h3>{{ myCommentThread.title }}</h3> 
+&middot; Posted by <b>{{ myCommentThread.username }}</b> on {{ myCommentThread.pub_date | date:'medium' }}</small>
+
+<br>
+<br>
+
 Comments:
 
 <br>
@@ -6,12 +13,36 @@ Comments:
 <div>
     <ul>
       <li ng-repeat="comment in myComments | orderBy: '-score'">
-         <b>[score: {{ comment.score }} ]</b>
          {{ comment.text }}
+	 <br>
+         <b>[score: {{ comment.score }} ]</b> 
+	 <small><small><input type="button" ng-click="likeComment(comment.id)" value="like" /></small></small>
 	 <br>
 	 <small>Posted by <b>{{ comment.username }}</b> on {{ comment.pub_date | date:'medium' }}</small>
       </li>
     </ul>
 </div>
+<br>
+<br>
+
+Add your own comment:
+
+<br>
+<br>
+
+<div>
+  <form novalidate>
+    Text:
+    <input type="text" ng-model="usercomment.mytext">
+    <br>
+    Name:
+    <input type="text" ng-model="usercomment.myusername">
+    <br>
+    <input type="submit" ng-click="submit()" value="Submit" />
+  </form>
+</div>
+
+<br>
+<br>
 
 <a href="/#/">Back to Threads</a>

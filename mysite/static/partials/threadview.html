@@ -5,13 +5,12 @@ Start a new thread!
 
 <div>
   <form novalidate>
-    <!-- {% csrf_token %} -->
     Title:
-    <input type="text" ng-model="user.mytitle">
+    <input type="text" ng-model="userthread.mytitle">
     Name:
-    <input type="text" ng-model="user.myusername">
+    <input type="text" ng-model="userthread.myusername">
     Description:
-    <input type="text" ng-model="user.mydescription">
+    <input type="text" ng-model="userthread.mydescription">
     <input type="submit" ng-click="submit()" value="Submit" />
   </form>
 </div>

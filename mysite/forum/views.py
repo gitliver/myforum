@@ -38,10 +38,58 @@ def create_post(request):
     except:
         return HttpResponseBadRequest('Error!')
 
+    try:
+        # save in database
+        # note that in_data.mytitle throws an error while in_data.get('mytitle') works smoothly
+        post = Thread(pub_date = datetime.datetime.now(pytz.timezone('US/Eastern')), username = in_data.get('myusername'), title = in_data.get('mytitle'), description = in_data.get('mydescription'))
+        post.save()
+    except:
+        return HttpResponseBadRequest('Error saving to database!')
+
+    return JsonResponse(in_data)
+
+def create_comment(request):
+    """Function to create comment, called by Angular"""
+
+    # DRY violation vis a vis the prev function - could extract this out into common function - fix later
+    if not request.is_ajax():
+        return HttpResponseBadRequest('Expected an XMLHttpRequest')
+
+    try:
+        in_data = json.loads(request.body)
+    except:
+        return HttpResponseBadRequest('Error!')
+
+    # get the Thread associated with the comments
+    mythread = Thread.objects.get(id=in_data.get('mythreadid'))
+
     # save in database
-    # note that in_data.mytitle throws an error while in_data.get('mytitle') works smoothly
-    post = Thread(pub_date = datetime.datetime.now(pytz.timezone('US/Eastern')), username = in_data.get('myusername'), title = in_data.get('mytitle'), description = in_data.get('mydescription'))
-    post.save()
+    try:
+        comment = Comment(pub_date = datetime.datetime.now(pytz.timezone('US/Eastern')), username = in_data.get('myusername'), text = in_data.get('mytext'), score = 0, thread = mythread )
+        comment.save()
+    except:
+        return HttpResponseBadRequest('Error saving to database!')
+
+    return JsonResponse(in_data)
+
+def like_comment(request):
+    """Function to 'like' a comment - i.e., increment its score"""
+
+    if not request.is_ajax():
+        return HttpResponseBadRequest('Expected an XMLHttpRequest')
+
+    try:
+        in_data = json.loads(request.body)
+    except:
+        return HttpResponseBadRequest('Error!')
+
+    # increment comment score
+    try:
+        comment = Comment.objects.get(id=in_data.get('mycommentid'))
+        comment.score += 1
+        comment.save()
+    except:
+        return HttpResponseBadRequest('Error saving to database!')
 
     return JsonResponse(in_data)
 
@@ -77,7 +125,7 @@ def thread_detail(request, myid):
         return drfJSONResponse(serializer.data)
 
 def thread_comments(request, myid):
-    """Return all comments as JSON for a forum thread of specific id for the REST api"""
+    """Return all comments as JSON for a forum thread of specific id"""
 
     try:
 	# get comments using the thread (foreign key) id

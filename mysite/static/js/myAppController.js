@@ -31,8 +31,8 @@ myApp.factory('dataFactory', function($http) {
 // Controller for listing threads and submitting threads via form
 myApp.controller('threadController', function($scope, $http, dataFactory) {
 
-    // function to get then list JSON data via a call to the factory function
-    $scope.threadlist = function() {
+    // function to get thread list via a call to the factory function
+    $scope.getThreadlist = function() {
         dataFactory.getThreads()
             .success(function (response) {
                 $scope.myThreads = response;
@@ -43,7 +43,7 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
     };
 
     // call it!
-    $scope.threadlist();
+    $scope.getThreadlist();
 
     // This function will submit the user-provided data in the Create Thread form
     // to the URL /create_post/, at which point the Django view will take over 
@@ -51,13 +51,13 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
     // modified from http://django-angular.readthedocs.org/en/latest/angular-model-form.html
     $scope.submit = function() {
 
-	console.log($scope.user)
+	// console.log($scope.userthread)
 
-	// POST $scope.user JSON to create_post/ URL
-        $http.post('create_post/', $scope.user)
+	// POST $scope.userthread JSON to create_post/ URL
+        $http.post('create_post/', $scope.userthread)
 	    .success(function(out_data) {
 		// re-list the threads, since updates have happened
-                $scope.threadlist();
+                $scope.getThreadlist();
             })
             .error(function (data, status, header, config) {
                 $scope.ResponseDetails = {
@@ -71,7 +71,7 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
 	    
 	// function to clear the form
         $scope.reset = function() {
-           $scope.user = {}
+           $scope.userthread = {}
         };    
 
         // call it
@@ -86,8 +86,9 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
     // grab variable part of URL (i.e., the thread id)
     var currentId = $routeParams.threadid;
 
-    // function to get then list JSON data via a call to the factory function
-    $scope.commentlist = function() {
+    // starting to violate DRY - fix later!
+    // function to get comments via a call to the factory function
+    $scope.getCommentlist = function() {
 	dataFactory.getOneThreadComments(currentId)
             .success(function (response) {
                 $scope.myComments = response;
@@ -97,8 +98,76 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
             });	
     };
 
+    // ditto abt DRY
+    // function to get associated thread via a call to the factory function
+    $scope.getSpecificThread = function() {
+	dataFactory.getOneThread(currentId)
+            .success(function (response) {
+                $scope.myCommentThread = response;
+            })
+            .error(function (error) {
+                $scope.status = 'Unable to load data: ' + error.message;
+            });	
+    };
+
     // call it
-    $scope.commentlist();
+    $scope.getCommentlist();
+    $scope.getSpecificThread();
+
+    // violations of DRY - much this should be extracted out into a common function
+    $scope.submit = function() {
+
+	// set thread id of comment
+	$scope.usercomment.mythreadid = currentId
+	
+	console.log($scope.usercomment)
+
+	// POST $scope.userthread JSON to create_post/ URL
+        $http.post('create_comment/', $scope.usercomment)
+	    .success(function(out_data) {
+		// re-list the comments, since updates have happened
+                $scope.getCommentlist();
+            })
+            .error(function (data, status, header, config) {
+                $scope.ResponseDetails = {
+                    "data": data,
+                    "status": status,
+                    "headers": header,
+                    "config": config 
+                }
+	        console.log($scope.ResponseDetails)
+            });
+	    
+	// clear the form
+        $scope.usercomment = {}
+    };
+
+    $scope.likeComment = function(commentId) {
+
+	// initialize variable
+        $scope.usercomment = {}
+
+	// set comment id of comment
+	$scope.usercomment.mycommentid = commentId
+	
+	console.log($scope.usercomment)
+
+	// POST $scope.userthread JSON to create_post/ URL
+        $http.post('like_comment/', $scope.usercomment)
+	    .success(function(out_data) {
+		// re-list the comments, since updates have happened
+                $scope.getCommentlist();
+            })
+            .error(function (data, status, header, config) {
+                $scope.ResponseDetails = {
+                    "data": data,
+                    "status": status,
+                    "headers": header,
+                    "config": config 
+                }
+	        console.log($scope.ResponseDetails)
+            });
+    };
 
 });
 
