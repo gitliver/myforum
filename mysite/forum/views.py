@@ -22,20 +22,14 @@ def justTesting(request):
 
 def index(request):
     """Main function that gets called when the user lands on the webpage"""
-
-    # get forum thread objects, ordered by publication date
-    # forumthreads = Thread.objects.order_by('pub_date')
-    # get Thread form
-    # form = ThreadModelForm()
-
-    # render the page, passing a dict that holds the form as well as all threads
-    # return render(request, 'forum/index.html', {'myform': form, 'mythreads': forumthreads})
     return render(request, 'forum/index.html')
 
 def create_post(request):
     """Function to create thread (or post), called by Angular"""
 
-    # see: http://django-angular.readthedocs.org/en/latest/angular-model-form.html
+    # borrowed from:
+    # http://django-angular.readthedocs.org/en/latest/angular-model-form.html
+
     if not request.is_ajax():
         return HttpResponseBadRequest('Expected an XMLHttpRequest')
 
@@ -51,41 +45,27 @@ def create_post(request):
 
     return JsonResponse(in_data)
 
-# Serializer classes for REST api
-# modified from http://www.django-rest-framework.org/tutorial/quickstart/
-# class ThreadViewSet(viewsets.ModelViewSet):
-#     """API endpoint that allows users to be viewed or edited."""
-# 
-#     queryset = Thread.objects.all().order_by('-pub_date')
-#     serializer_class = ThreadSerializer
-# 
-# class CommentViewSet(viewsets.ModelViewSet):
-#     """API endpoint that allows groups to be viewed or edited."""
-# 
-#     queryset = Comment.objects.all()
-#     serializer_class = CommentSerializer
-
-# modified from: http://www.django-rest-framework.org/tutorial/1-serialization/
 class drfJSONResponse(HttpResponse):
     """An HttpResponse that renders its content into JSON."""
+    # modified from: http://www.django-rest-framework.org/tutorial/1-serialization/
 
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super(drfJSONResponse, self).__init__(content, **kwargs)
 
-# modified from: http://www.django-rest-framework.org/tutorial/1-serialization/
 def thread_list(request):
-    """List all forum threads."""
+    """Return all forum threads as JSON for the REST api"""
+    # modified from: http://www.django-rest-framework.org/tutorial/1-serialization/
 
     if request.method == 'GET':
         mythreads = Thread.objects.all()
         serializer = ThreadSerializer(mythreads, many=True)
         return drfJSONResponse(serializer.data)
 
-# modified from: http://www.django-rest-framework.org/tutorial/1-serialization/
 def thread_detail(request, myid):
-    """Thread detail view"""
+    """Return forum thread of specific id as JSON for the REST api"""
+    # modified from: http://www.django-rest-framework.org/tutorial/1-serialization/
 
     try:
         thread = Thread.objects.get(id=myid)
@@ -97,7 +77,7 @@ def thread_detail(request, myid):
         return drfJSONResponse(serializer.data)
 
 def thread_comments(request, myid):
-    """Get the comments for a particular thread"""
+    """Return all comments as JSON for a forum thread of specific id for the REST api"""
 
     try:
 	# get comments using the thread (foreign key) id

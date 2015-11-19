@@ -1,7 +1,17 @@
 Comments:
 
 <br>
-comment ...
 <br>
 
-<a href="/#/">Hide</a>
+<div>
+    <ul>
+      <li ng-repeat="comment in myComments | orderBy: '-score'">
+         <b>[score: {{ comment.score }} ]</b>
+         {{ comment.text }}
+	 <br>
+	 <small>Posted by <b>{{ comment.username }}</b> on {{ comment.pub_date | date:'medium' }}</small>
+      </li>
+    </ul>
+</div>
+
+<a href="/#/">Back to Threads</a>
