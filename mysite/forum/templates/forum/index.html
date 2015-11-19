@@ -45,7 +45,7 @@ Threads:
 
 <div>
     <ul>
-      <li ng-repeat="thread in myThreads">
+      <li ng-repeat="thread in myThreads | orderBy: '-pub_date'">
 	 <u>{{ thread.title }}</u>
 	 <small><i>( {{ thread.description }} )</i></small>
 	 <br>
@@ -61,7 +61,7 @@ Threads:
 {% endblock %}
 
 {% block jsblock %}
-<!-- concat with grunt later -->
-<script src="/static/js/myfunctions.js"></script>
+
 <script src="/static/js/myAppController.js"></script>
+
 {% endblock %}

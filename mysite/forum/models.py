@@ -29,3 +29,5 @@ class Comment(models.Model):
     username = models.CharField(max_length=50)
     text = models.CharField(max_length=300)
     score = models.IntegerField(default=0)
+    # Many-to-one relationship (many comments to one thread)
+    thread = models.ForeignKey(Thread)
