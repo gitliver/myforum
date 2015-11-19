@@ -3,6 +3,7 @@
 &middot; Posted by <b>{{ myCommentThread.username }}</b> on {{ myCommentThread.pub_date | date:'medium' }}</small>
 
 <br>
+<hr>
 <br>
 
 Comments:
@@ -22,7 +23,9 @@ Comments:
       </li>
     </ul>
 </div>
+
 <br>
+<hr>
 <br>
 
 Add your own comment:
@@ -34,10 +37,8 @@ Add your own comment:
   <form novalidate>
     Text:
     <input type="text" ng-model="usercomment.mytext">
-    <br>
     Name:
     <input type="text" ng-model="usercomment.myusername">
-    <br>
     <input type="submit" ng-click="submit()" value="Submit" />
   </form>
 </div>
@@ -46,3 +47,6 @@ Add your own comment:
 <br>
 
 <a href="/#/">Back to Threads</a>
+<br>
+<br>
+<samp><a href="/threads/{{myCommentThread.id}}/comments">Get JSON data</a></samp>

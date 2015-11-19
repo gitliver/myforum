@@ -7,6 +7,7 @@ mysite/db.sqlite3
 mysite/notes
 # mysite/static
 mysite/static/js/packages
+mysite/static/img
 mysite/static/node_modules
 mysite/static/admin
 # this has secret key:
