@@ -1,67 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- overarching span tags, invoking Angular -->
-<span ng-app="myApp">
-<span ng-controller="threadController">
-
-<h2>The Pontificator</h2>
-<i>A forum for forum's sake</i>
-
-<br>
-<br>
-
-Start a new thread!
-
-<br>
-<br>
-
-<div>
-  <form novalidate>
-    {% csrf_token %}
-    Title:
-    <input type="text" ng-model="user.mytitle">
-    Name:
-    <input type="text" ng-model="user.myusername">
-    Description:
-    <input type="text" ng-model="user.mydescription">
-    <input type="submit" ng-click="submit()" value="Submit" />
-  </form>
-</div>
-
-<br>
-<hr>
-<br>
-
-<!-- 
-"Django and AngularJS share the same token for variable substitution in templates...
-The cleanest solution to circumvent this, is by using the verbatim tag"
-http://django-angular.readthedocs.org/en/latest/integration.html
- -->
-{% verbatim %}
-
-Threads:
-<br>
-
-<div>
-    <ul>
-      <li ng-repeat="thread in myThreads | orderBy: '-pub_date'">
-	 <u>{{ thread.title }}</u>
-	 <small><i>( {{ thread.description }} )</i></small>
-	 <br>
-	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</small>
-      </li>
-    </ul>
-</div>
-
-{% endverbatim %}
-
-</span>
-</span>
+    <!-- overarching span tags, invoking Angular -->
+    <span ng-app="myApp">
+     
+    <h2>The Pontificator</h2>
+    <i>A forum for forum's sake</i>
+    
+    <br>
+    <br>
+    
+    <div ng-view></div> <!--ngView: Angular Partials get written here -->
+    
+    </span> <!-- myApp -->
 {% endblock %}
 
 {% block jsblock %}
-
-<script src="/static/js/myAppController.js"></script>
-
+    <script src="/static/js/myAppController.js"></script>
 {% endblock %}

@@ -39,7 +39,10 @@ def create_post(request):
     if not request.is_ajax():
         return HttpResponseBadRequest('Expected an XMLHttpRequest')
 
-    in_data = json.loads(request.body)
+    try:
+        in_data = json.loads(request.body)
+    except:
+        return HttpResponseBadRequest('Error!')
 
     # save in database
     # note that in_data.mytitle throws an error while in_data.get('mytitle') works smoothly

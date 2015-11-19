@@ -1,5 +1,5 @@
 // Instantiate the Angular app
-var myApp = angular.module('myApp', []);
+var myApp = angular.module('myApp', ['ngResource', 'ngRoute']);
 
 // Controller for listing threads and submitting threads via form
 myApp.controller('threadController', function($scope, $http) {
@@ -18,7 +18,7 @@ myApp.controller('threadController', function($scope, $http) {
     // modified from http://django-angular.readthedocs.org/en/latest/angular-model-form.html
     $scope.submit = function() {
 
-	// console.log($scope.user)
+	console.log($scope.user)
 
 	// POST $scope.user JSON to create_post/ URL
         $http.post('create_post/', $scope.user)
@@ -43,6 +43,41 @@ myApp.controller('threadController', function($scope, $http) {
 
         $scope.reset();
     };
+
+});
+
+// Controller for comments view
+myApp.controller('commentController', function($scope, $http) {
+    console.log("Testing ...")
+});
+
+// Angular routing to partials
+myApp.config(function ($routeProvider, $locationProvider) {
+
+    // Saying '/' actually means: http://myurl.com/#/
+    // Saying '/test' actually means: http://myurl.com/#/test and so on
+    // In this awkward way, conflicts between Django's URL routing mechanism and
+    // Angular's are avoided, since Django only deals with non-# paths
+
+    $routeProvider
+        .when('/', {
+            templateUrl: '/static/partials/threadview.html',
+            controller: 'threadController'
+        })
+        .when('/comments', {
+            templateUrl: '/static/partials/commentview.html',
+            controller: 'commentController'
+        })
+        .when('/comments/:id', {
+            templateUrl: '/static/partials/commentview.html',
+            controller: 'commentController'
+        })
+        .otherwise({
+            redirectTo: '/'
+            // templateUrl: '/static/partials/threadview.html'
+        });
+
+    // $locationProvider.html5Mode(true);
 
 });
 

@@ -1,0 +1,35 @@
+Start a new thread!
+
+<br>
+<br>
+
+<div>
+  <form novalidate>
+    <!-- {% csrf_token %} -->
+    Title:
+    <input type="text" ng-model="user.mytitle">
+    Name:
+    <input type="text" ng-model="user.myusername">
+    Description:
+    <input type="text" ng-model="user.mydescription">
+    <input type="submit" ng-click="submit()" value="Submit" />
+  </form>
+</div>
+
+<br>
+<hr>
+<br>
+
+Threads:
+<br>
+
+<div>
+    <ul>
+      <li ng-repeat="thread in myThreads | orderBy: '-pub_date'">
+         <a href="/#/">{{ thread.title }}</a>
+	 <small><i>( {{ thread.description }} )</i></small>
+	 <br>
+	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</small>
+      </li>
+    </ul>
+</div>
