@@ -6,6 +6,7 @@ myApp.factory('dataFactory', function($http) {
 
     // modified from: http://weblogs.asp.net/dwahlin/using-an-angularjs-factory-to-interact-with-a-restful-service
      
+    // url to query
     var urlBase = '/threads';
     var dataFactory = {};
 
@@ -66,16 +67,11 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
                     "headers": header,
                     "config": config 
                 }
-	        console.log($scope.ResponseDetails)
+	        // console.log($scope.ResponseDetails)
             });
 	    
-	// function to clear the form
-        $scope.reset = function() {
-           $scope.userthread = {}
-        };    
-
-        // call it
-        $scope.reset();
+	// clear the form
+        $scope.userthread = {}
     };
 
 });
@@ -98,7 +94,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
             });	
     };
 
-    // ditto abt DRY
+    // DRY violations - fix later!
     // function to get associated thread via a call to the factory function
     $scope.getSpecificThread = function() {
 	dataFactory.getOneThread(currentId)
@@ -110,17 +106,17 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
             });	
     };
 
-    // call it
+    // call these functions
     $scope.getCommentlist();
     $scope.getSpecificThread();
 
-    // violations of DRY - much this should be extracted out into a common function
+    // DRY violations - fix later!
     $scope.submit = function() {
 
 	// set thread id of comment
 	$scope.usercomment.mythreadid = currentId
 	
-	console.log($scope.usercomment)
+	// console.log($scope.usercomment)
 
 	// POST $scope.userthread JSON to create_post/ URL
         $http.post('create_comment/', $scope.usercomment)
@@ -135,7 +131,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
                     "headers": header,
                     "config": config 
                 }
-	        console.log($scope.ResponseDetails)
+	        // console.log($scope.ResponseDetails)
             });
 	    
 	// clear the form
@@ -150,7 +146,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
 	// set comment id of comment
 	$scope.usercomment.mycommentid = commentId
 	
-	console.log($scope.usercomment)
+	// console.log($scope.usercomment)
 
 	// POST $scope.userthread JSON to create_post/ URL
         $http.post('like_comment/', $scope.usercomment)
@@ -165,7 +161,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
                     "headers": header,
                     "config": config 
                 }
-	        console.log($scope.ResponseDetails)
+	        // console.log($scope.ResponseDetails)
             });
     };
 
