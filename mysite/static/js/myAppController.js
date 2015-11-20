@@ -118,7 +118,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
 	
 	// console.log($scope.usercomment)
 
-	// POST $scope.userthread JSON to create_post/ URL
+	// POST $scope.usercomment JSON to create_comment/ URL
         $http.post('create_comment/', $scope.usercomment)
 	    .success(function(out_data) {
 		// re-list the comments, since updates have happened
@@ -148,7 +148,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
 	
 	// console.log($scope.usercomment)
 
-	// POST $scope.userthread JSON to create_post/ URL
+	// POST $scope.usercomment JSON to like_comment/ URL
         $http.post('like_comment/', $scope.usercomment)
 	    .success(function(out_data) {
 		// re-list the comments, since updates have happened
@@ -175,14 +175,11 @@ myApp.config(function ($routeProvider, $locationProvider) {
     // In this awkward way, conflicts between Django's URL routing mechanism and
     // Angular's are avoided, since Django only deals with non-# paths
 
+    // switch between the thread view (default) and the comment view
     $routeProvider
         .when('/', {
             templateUrl: '/static/partials/threadview.html',
             controller: 'threadController'
-        })
-        .when('/comments', {
-            templateUrl: '/static/partials/commentview.html',
-            controller: 'commentController'
         })
         .when('/comments/:threadid', {
             templateUrl: '/static/partials/commentview.html',
