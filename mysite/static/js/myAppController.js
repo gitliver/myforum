@@ -1,5 +1,5 @@
 // Instantiate the Angular app
-var myApp = angular.module('myApp', ['ngRoute']);
+var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']);
 
 // Factory to return data from RESTful api
 myApp.factory('dataFactory', function($http) {
@@ -145,7 +145,7 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
 
 	// set comment id of comment
 	$scope.usercomment.mycommentid = commentId
-	
+
 	// console.log($scope.usercomment)
 
 	// POST $scope.usercomment JSON to like_comment/ URL
@@ -196,8 +196,13 @@ myApp.config(function ($routeProvider, $locationProvider) {
 
 // Add stuff to header, deal with csrftoken issue
 // modified from http://django-angular.readthedocs.org/en/latest/integration.html (see the discussion there)
-myApp.config(function($httpProvider) {
-    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-});
+// and http://www.daveoncode.com/2013/10/17/how-to-make-angularjs-and-django-play-nice-together/
+myApp
+    .config(function($httpProvider) {
+        $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    })
+    .run(['$http','$cookies', function($http, $cookies) {
+            $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
+    }]);

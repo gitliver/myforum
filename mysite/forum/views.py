@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from .serializers import ThreadSerializer, CommentSerializer
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 import json, datetime, pytz
 
 # ------------------------
@@ -22,6 +23,12 @@ def justTesting(request):
     """A test function, to ensure urls.py is routing properly"""
     return HttpResponse("Hello, world")
 
+# "If your view is not rendering a template containing the csrf_token template tag,
+# Django might not set the CSRF token cookie. This is common in cases where forms
+# are dynamically added to the page. To address this case, Django provides a view
+# decorator which forces setting of the cookie: ensure_csrf_cookie()"
+# ---https://docs.djangoproject.com/en/1.8/ref/csrf/
+@ensure_csrf_cookie
 def index(request):
     """Main function that gets called when the user lands on the webpage"""
     # most of the heavy lifting is handled by Angular, on the front end
