@@ -2,7 +2,7 @@
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']);
 
 // Factory to return data from or post data to RESTful api
-myApp.factory('dataFactory', function($http) {
+myApp.factory('dataFactory', ['$http', function($http) {
 
     var dataFactory = {};
 
@@ -36,10 +36,10 @@ myApp.factory('dataFactory', function($http) {
 
     return dataFactory;
  
-});
+}]);
 
 // Controller for listing threads and submitting threads via form
-myApp.controller('threadController', function($scope, $http, dataFactory) {
+myApp.controller('threadController', ['$scope', '$http', 'dataFactory', function($scope, $http, dataFactory) {
 
     // base url to query
     var urlBase = '/threads';
@@ -81,10 +81,10 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
 	}
     };
 
-});
+}]);
 
 // Controller for comments view
-myApp.controller('commentController', function($scope, $http, $routeParams, dataFactory) {
+myApp.controller('commentController', ['$scope', '$http', '$routeParams', 'dataFactory', function($scope, $http, $routeParams, dataFactory) {
 
     // base url to query
     var urlBase = '/threads';
@@ -142,10 +142,10 @@ myApp.controller('commentController', function($scope, $http, $routeParams, data
 	    });
     };
 
-});
+}]);
 
 // Angular routing to partials
-myApp.config(function ($routeProvider, $locationProvider) {
+myApp.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
     // Saying '/' actually means: http://myurl.com/#/
     // Saying '/test' actually means: http://myurl.com/#/test and so on
@@ -168,17 +168,17 @@ myApp.config(function ($routeProvider, $locationProvider) {
 
     // $locationProvider.html5Mode(true);
 
-});
+}]);
 
 // Add stuff to header, deal with csrftoken issue
 // modified from http://django-angular.readthedocs.org/en/latest/integration.html (see the discussion there)
 // and http://www.daveoncode.com/2013/10/17/how-to-make-angularjs-and-django-play-nice-together/
 myApp
-    .config(function($httpProvider) {
+    .config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         $httpProvider.defaults.xsrfCookieName = 'csrftoken';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    })
+    }])
     .run(['$http','$cookies', function($http, $cookies) {
             $http.defaults.headers.post['X-CSRFToken'] = $cookies.csrftoken;
     }]);
