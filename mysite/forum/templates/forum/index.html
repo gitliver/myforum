@@ -3,17 +3,26 @@
 {% block content %}
     <!-- overarching span tags, invoking Angular -->
     <span ng-app="myApp">
-     
-    <h2>The Pontificator</h2>
-    <i>A forum for forum's sake</i>
-    <br>
-    <br>
-    <img src="/static/img/pontificator.300.jpg" alt="image" width="150">
+
+    <div class="center">
+        <div class="f0">The Pontificator</div>
+        <i class="subhead">A forum for forum's sake</i>
+        <br>
+        <br>
+        <img src="/static/img/pontificator.300.jpg" alt="image" width="150">
+    </div>
     
     <br>
     <br>
     
     <div ng-view></div> <!--ngView: Angular Partials get written here -->
+
+    <!--
+    <div class="center">
+	<br>
+        <img src="/static/img/pontificate.450.jpg" alt="image" width="350">
+    </div>
+    -->
     
     </span> <!-- myApp -->
 {% endblock %}

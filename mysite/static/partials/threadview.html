@@ -15,7 +15,7 @@ Start a new thread!
   </form>
 </div>
 
-<div ng-model="alertMessage">{{alertMessage}}</div>
+<div class="alert" ng-model="alertMessage">{{alertMessage}}</div>
 
 <br>
 <hr>
@@ -27,10 +27,10 @@ Threads:
 <div>
     <ul>
       <li ng-repeat="thread in myThreads | orderBy: '-pub_date'">
-         <a href="/#/comments/{{thread.id}}">{{ thread.title }}</a>
+         <a class="f1" href="/#/comments/{{thread.id}}">{{ thread.title }}</a>
 	 <small><i>{{ thread.description }}</i></small>
 	 <br>
-	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</small>
+	 <span class="f2">Posted by <b class="heavy">{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</span>
       </li>
     </ul>
 </div>
