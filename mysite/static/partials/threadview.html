@@ -28,7 +28,7 @@ Threads:
     <ul>
       <li ng-repeat="thread in myThreads | orderBy: '-pub_date'">
          <a href="/#/comments/{{thread.id}}">{{ thread.title }}</a>
-	 <small><i>( {{ thread.description }} )</i></small>
+	 <small><i>{{ thread.description }}</i></small>
 	 <br>
 	 <small>Posted by <b>{{ thread.username }}</b> on {{ thread.pub_date | date:'medium' }}</small>
       </li>

@@ -60,6 +60,12 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
 
 	// if data nonempty
         if ($scope.userthread.mytitle && $scope.userthread.myusername) {
+
+            // add parentheses to thread description 
+            if ($scope.userthread.mydescription) {
+                $scope.userthread.mydescription = '( ' + $scope.userthread.mydescription + ' )';
+	    }
+
             dataFactory.postApiData('create_post/', $scope.userthread)
 	        .then(function(data) {
 	            // re-list the threads, since updates have happened
