@@ -1,28 +1,37 @@
 // Instantiate the Angular app
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']);
 
-// Factory to return data from RESTful api
+// Factory to return data from or post data to RESTful api
 myApp.factory('dataFactory', function($http) {
 
-    // modified from: http://weblogs.asp.net/dwahlin/using-an-angularjs-factory-to-interact-with-a-restful-service
-     
-    // url to query
-    var urlBase = '/threads';
     var dataFactory = {};
 
-    // get all forum threads from the api (query /threads URL)
-    dataFactory.getThreads = function () {
-        return $http.get(urlBase)
+    // reading:
+    // http://chariotsolutions.com/blog/post/angularjs-corner-using-promises-q-handle-asynchronous-calls/
+    // http://www.codelord.net/2015/05/25/dont-use-$https-success/
+    // Note: "The $http legacy promise methods success and error have been deprecated.
+    // Use the standard then method instead." ---docs
+
+    // http GET call to retrieve api data (forum thread, all forum threads, or forum thread's comments)
+    dataFactory.getApiData = function (myUrl) {
+        return $http.get(myUrl)
+            .then(function(response) {
+                return response.data;
+            },
+            function (httpError) {
+                throw httpError.status + " : " + httpError.data;
+            });
     };
 
-    // get a particular forum thread from api
-    dataFactory.getOneThread = function (thread_id) {
-        return $http.get(urlBase + '/' + thread_id)
-    };
-
-    // get comments for a particular forum thread from api
-    dataFactory.getOneThreadComments = function (thread_id) {
-        return $http.get(urlBase + '/' + thread_id + '/comments/')
+    // http POST to URL (Django will take over when call hits the "back end")
+    dataFactory.postApiData = function (myUrl, myData) {
+        return $http.post(myUrl, myData)
+            .then(function(response) {
+                return response.data;
+            },
+            function (httpError) {
+                throw httpError.status + " : " + httpError.data;
+            });
     };
 
     return dataFactory;
@@ -32,46 +41,38 @@ myApp.factory('dataFactory', function($http) {
 // Controller for listing threads and submitting threads via form
 myApp.controller('threadController', function($scope, $http, dataFactory) {
 
-    // function to get thread list via a call to the factory function
-    $scope.getThreadlist = function() {
-        dataFactory.getThreads()
-            .success(function (response) {
-                $scope.myThreads = response;
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load data: ' + error.message;
-            });	
-    };
+    // base url to query
+    var urlBase = '/threads';
+    // alert message
+    var myAlertMessage = "You must fill in both Title and Name fields";
 
-    // call it!
+    // define fuction which calls factory function to get thread list
+    $scope.getThreadlist = function () {
+        dataFactory.getApiData(urlBase).then(function(data) { $scope.myThreads = data; });
+    }
+    // call it
     $scope.getThreadlist();
 
     // This function will submit the user-provided data in the Create Thread form
     // to the URL /create_post/, at which point the Django view will take over 
     // to add this information into the database
-    // modified from http://django-angular.readthedocs.org/en/latest/angular-model-form.html
     $scope.submit = function() {
 
-	// console.log($scope.userthread)
+	// if data nonempty
+        if ($scope.userthread.mytitle && $scope.userthread.myusername) {
+            dataFactory.postApiData('create_post/', $scope.userthread)
+	        .then(function(data) {
+	            // re-list the threads, since updates have happened
+                    $scope.getThreadlist();
+	    });
 
-	// POST $scope.userthread JSON to create_post/ URL
-        $http.post('create_post/', $scope.userthread)
-	    .success(function(out_data) {
-		// re-list the threads, since updates have happened
-                $scope.getThreadlist();
-            })
-            .error(function (data, status, header, config) {
-                $scope.ResponseDetails = {
-                    "data": data,
-                    "status": status,
-                    "headers": header,
-                    "config": config 
-                }
-	        // console.log($scope.ResponseDetails)
-            });
-	    
-	// clear the form
-        $scope.userthread = {}
+	    // clear the form etc
+            $scope.userthread = {};
+            $scope.alertMessage = "";
+	}
+	else {
+            $scope.alertMessage = myAlertMessage;
+	}
     };
 
 });
@@ -79,90 +80,60 @@ myApp.controller('threadController', function($scope, $http, dataFactory) {
 // Controller for comments view
 myApp.controller('commentController', function($scope, $http, $routeParams, dataFactory) {
 
+    // base url to query
+    var urlBase = '/threads';
+    // alert message
+    var myAlertMessage = "You must fill in both Text and Name fields";
+
     // grab variable part of URL (i.e., the thread id)
-    var currentId = $routeParams.threadid;
+    var threadId = $routeParams.threadid;
 
-    // starting to violate DRY - fix later!
-    // function to get comments via a call to the factory function
-    $scope.getCommentlist = function() {
-	dataFactory.getOneThreadComments(currentId)
-            .success(function (response) {
-                $scope.myComments = response;
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load data: ' + error.message;
-            });	
-    };
-
-    // DRY violations - fix later!
-    // function to get associated thread via a call to the factory function
-    $scope.getSpecificThread = function() {
-	dataFactory.getOneThread(currentId)
-            .success(function (response) {
-                $scope.myCommentThread = response;
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load data: ' + error.message;
-            });	
-    };
-
-    // call these functions
+    // define fuction which calls factory function to get comment list
+    $scope.getCommentlist = function () {
+        dataFactory.getApiData(urlBase + '/' + threadId + '/comments/').then(function(data) { $scope.myComments = data; });
+    }
+    // call it
     $scope.getCommentlist();
-    $scope.getSpecificThread();
 
-    // DRY violations - fix later!
+    // call factory function to get associated thread
+    dataFactory.getApiData(urlBase + '/' + threadId).then(function(data) { $scope.myCommentThread = data; });
+
     $scope.submit = function() {
 
 	// set thread id of comment
-	$scope.usercomment.mythreadid = currentId
-	
-	// console.log($scope.usercomment)
+	$scope.usercomment.mythreadid = threadId;
 
-	// POST $scope.usercomment JSON to create_comment/ URL
-        $http.post('create_comment/', $scope.usercomment)
-	    .success(function(out_data) {
-		// re-list the comments, since updates have happened
-                $scope.getCommentlist();
-            })
-            .error(function (data, status, header, config) {
-                $scope.ResponseDetails = {
-                    "data": data,
-                    "status": status,
-                    "headers": header,
-                    "config": config 
-                }
-	        // console.log($scope.ResponseDetails)
-            });
-	    
-	// clear the form
-        $scope.usercomment = {}
+	// if data nonempty
+        if ($scope.usercomment.mytext && $scope.usercomment.myusername) {
+	    // POST $scope.usercomment JSON to create_comment/ URL
+            dataFactory.postApiData('create_comment/', $scope.usercomment)
+	        .then(function(data) {
+                    // re-list the comments, since updates have happened
+                    $scope.getCommentlist();
+	        });
+
+            $scope.usercomment = {};
+            $scope.alertMessage = "";
+	}
+	else {
+            $scope.alertMessage = myAlertMessage;
+	}
     };
 
     $scope.likeComment = function(commentId) {
 
 	// initialize variable
-        $scope.usercomment = {}
+        $scope.usercomment = {};
 
 	// set comment id of comment
-	$scope.usercomment.mycommentid = commentId
-
-	// console.log($scope.usercomment)
+	$scope.usercomment.mycommentid = commentId;
 
 	// POST $scope.usercomment JSON to like_comment/ URL
-        $http.post('like_comment/', $scope.usercomment)
-	    .success(function(out_data) {
+        dataFactory.postApiData('like_comment/', $scope.usercomment)
+	    .then(function(data) {
 		// re-list the comments, since updates have happened
                 $scope.getCommentlist();
-            })
-            .error(function (data, status, header, config) {
-                $scope.ResponseDetails = {
-                    "data": data,
-                    "status": status,
-                    "headers": header,
-                    "config": config 
-                }
-	        // console.log($scope.ResponseDetails)
-            });
+	    });
     };
 
 });
@@ -187,7 +158,6 @@ myApp.config(function ($routeProvider, $locationProvider) {
         })
         .otherwise({
             redirectTo: '/'
-            // templateUrl: '/static/partials/threadview.html'
         });
 
     // $locationProvider.html5Mode(true);
